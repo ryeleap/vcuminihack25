@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -37,6 +34,9 @@ public class FoodQueue {
         return null;
     }
 
+    public String toCSV(FoodType food) {
+        return food.getName() + "," + food.getQuantity() + "," + food.getType() + "," + food.getSuperType() + "," + food.getExpirationdate() + "," + food.getLatitude() + "," + food.getLongitude() + "," + food.getVendor();
+    }
     public static void loadItems(String filePath, Queue<FoodType> foodQueue) throws FileNotFoundException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -56,6 +56,17 @@ public class FoodQueue {
 
                     foodQueue.add(new FoodType(name, quantity, type, superType, expirationdate, latitude, longitude, vendor));
                 }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  void exportItems(String filePath, Queue<FoodType> foodQueue) throws FileNotFoundException {
+        try (FileWriter writer = new FileWriter("foodList.csv")){
+            writer.write("name, quantity, type, superType, expiration date, pickup latitude, pickup longitude, vendor\n");
+            for (FoodType food : foodQueue) {
+                writer.write(toCSV(food) + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
